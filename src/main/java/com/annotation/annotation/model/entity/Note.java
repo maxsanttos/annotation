@@ -1,9 +1,6 @@
 package com.annotation.annotation.model.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
@@ -11,13 +8,24 @@ import java.time.LocalDateTime;
 @Table(name = "notes")
 public class Note {
 
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(name = "data_criacao",updatable = false)
     private LocalDateTime dataCriacao;
+
+    // Este método será chamado automaticamente antes do ojeto ser persistido
+    @PrePersist
+    protected  void onCreate(){
+        this.dataCriacao = LocalDateTime.now();
+    }
 
     @ManyToOne
     @JoinColumn(name = "user_id")
