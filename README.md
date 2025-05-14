@@ -49,7 +49,7 @@ Este projeto é uma API REST desenvolvida com **Java + Spring Boot**, que oferec
 
 1. Clone o repositório:
    ```bash
-   git clone https://github.com/seu-usuario/bloco-anotacoes.git
+   git clone https://github.com/maxsanttos/annotation.git
    cd bloco-anotacoes
 ````
 
