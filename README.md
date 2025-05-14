@@ -112,13 +112,7 @@ Dockerfile
 * Para fins de simplicidade, o projeto ainda não possui front-end, mas pode ser integrado com Angular, React, etc.
 * Banco de dados criado automaticamente ao iniciar com Docker
 
----
 
 ## 👨‍💻 Autor
 
 maxsanttos
-
-```
-
-
-
