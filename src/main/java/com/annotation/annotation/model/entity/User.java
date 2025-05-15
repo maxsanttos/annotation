@@ -41,6 +41,10 @@ public class User implements UserDetails {
         this.role = role;
     }
 
+    public User() {
+
+    }
+
     public Long getId() {
         return id;
     }
@@ -82,12 +86,12 @@ public class User implements UserDetails {
 
     @Override
     public String getPassword() {
-        return "password";
+        return password;
     }
 
     @Override
     public String getUsername() {
-        return "name";
+        return name;
     }
 
     @Override
