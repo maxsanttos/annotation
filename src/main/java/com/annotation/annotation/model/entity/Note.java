@@ -3,6 +3,7 @@ package com.annotation.annotation.model.entity;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Entity
 @Table(name = "notes")
@@ -21,7 +22,6 @@ public class Note {
     @Column(name = "data_criacao",updatable = false)
     private LocalDateTime dataCriacao;
 
-    // Este método será chamado automaticamente antes do ojeto ser persistido
     @PrePersist
     protected  void onCreate(){
         this.dataCriacao = LocalDateTime.now();
@@ -79,5 +79,17 @@ public class Note {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Note note = (Note) o;
+        return Objects.equals(id, note.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
     }
 }
