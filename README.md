@@ -63,19 +63,23 @@ Este projeto é uma API REST desenvolvida com **Java + Spring Boot**, que oferec
 ## 🛠️ Estrutura do Projeto
 
 ```bash
-src/
-├── main/
-│   ├── java/com/seuusuario/blocoanotacoes/
-│   │   ├── controller/
-│   │   ├── service/
-│   │   ├── repository/
-│   │   └── model/entity/
-│   │       ├── User.java
-│   │       └── Note.java
-│   └── resources/
-│       └── application.properties
-docker-compose.yml
-Dockerfile
+ Annotation/
+├── src/
+│   └── main/
+│       ├── java/com/annotation/annotation/
+│       │   ├── controller/           # Endpoints REST
+│       │   ├── service/              # Regras de negócio
+│       │   ├── repository/           # Interfaces do Spring Data JPA
+│       │   └── model/entity/         # Entidades e DTOs
+│       │       ├── User.java
+│       │       ├── Note.java
+│       │       ├── UserRole.java
+│       │       ├── UserUpdateDTO.java
+│       │       └── UserMapper.java
+│       └── resources/
+│           └── application.properties
+├── Dockerfile                       # Configuração para container da aplicação
+└── docker-compose.yml               # Orquestração com banco de dados
 ```
 
 ---
