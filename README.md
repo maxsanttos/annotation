@@ -52,14 +52,7 @@ Este projeto é uma API REST desenvolvida com **Java + Spring Boot**, que oferec
    git clone https://github.com/maxsanttos/annotation.git
    cd bloco-anotacoes
 ````
-
-2. Execute o projeto com Docker Compose:
-
-   ```bash
-   docker-compose up --build
-   ```
-
-3. Acesse a aplicação:
+2. Acesse a aplicação:
 
    ```
    http://localhost:8080
@@ -87,24 +80,32 @@ Dockerfile
 
 ---
 
-## 🧪 Exemplos de Endpoints
 
-### Usuários
+## 🧪 API Endpoints (examples)
 
-* `POST /api/usuarios` → Criar usuário
-* `GET /api/usuarios` → Listar todos
-* `GET /api/usuarios/{id}` → Buscar por ID
-* `PUT /api/usuarios/{id}` → Atualizar
-* `DELETE /api/usuarios/{id}` → Deletar
+| Method | Endpoint            | Description               |
+|--------|---------------------|---------------------------|
+| POST   | `/users`            | Create new user           |
+| PUT    | `/users/{id}`       | Update existing user      |
+| GET    | `/users`            | List all users            |
+| GET    | `/users/{id}`       | Get user by ID            |
+| DELETE | `/users/{id}`       | Delete user by ID         |
+| GET    | `/auth/me`          | Get logged-in user info   |
 
-### Notas
+## 🔧 Running Locally
 
-* `POST /api/usuarios/{id}/notas` → Criar nota para o usuário
-* `GET /api/usuarios/{id}/notas` → Listar todas as notas do usuário
-* `PUT /api/notas/{id}` → Atualizar nota
-* `DELETE /api/notas/{id}` → Deletar nota
+```bash
+# Clone the repository
+git clone https://github.com/your-username/annotation-api.git
+cd annotation-api
 
----
+# Build the project
+./mvnw clean install
+
+# Run the application
+./mvnw spring-boot:run
+
+
 
 ## 📌 Observações
 
