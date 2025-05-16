@@ -95,6 +95,11 @@ Este projeto é uma API REST desenvolvida com **Java + Spring Boot**, que oferec
 | GET    | `/users/{id}`       | Get user by ID            |
 | DELETE | `/users/{id}`       | Delete user by ID         |
 | GET    | `/auth/me`          | Get logged-in user info   |
+| POST | /users/{userId}/notes| Criar nova anotação para usuário |
+| GET | /users/{userId}/notes| Buscar todas as anotações do usuário |
+| GET | /notes/{noteId} | Buscar anotação por ID |
+| PUT | /notes/{noteId} | Atualizar anotação |
+| DELETE | /notes/{noteId} | Deletar anotação por ID |
 
 ## 🔧 Running Locally
 
