@@ -8,6 +8,9 @@ public class UserResponseDTO {
     private String name;
     private UserRole role;
 
+    public UserResponseDTO() {
+    }
+
     public UserResponseDTO(Long id, String name, UserRole role) {
         this.id = id;
         this.name = name;
@@ -24,5 +27,17 @@ public class UserResponseDTO {
 
     public UserRole getRole() {
         return role;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setRole(UserRole role) {
+        this.role = role;
     }
 }

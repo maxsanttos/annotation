@@ -1,8 +1,11 @@
 package com.annotation.annotation.service;
 
 import com.annotation.annotation.model.entity.User;
+import com.annotation.annotation.model.entity.UserMapper;
 import com.annotation.annotation.model.entity.UserRole;
+import com.annotation.annotation.model.entity.dto.UserUpdateDTO;
 import com.annotation.annotation.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +22,7 @@ public class UserService {
     private final UserRepository repository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository repository, PasswordEncoder passwordEncoder){
+    public UserService(UserRepository repository, PasswordEncoder passwordEncoder) {
         this.repository = repository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -55,21 +58,17 @@ public class UserService {
         User user = repository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado com id: " + id));
 
-        if (name != null && !name.isBlank()) {
-            repository.findByName(name).ifPresent(existingUser -> {
-                if (!existingUser.getId().equals(id)) {
-                    throw new IllegalArgumentException("Nome de usuário já está em uso.");
-                }
-            });
-            user.setName(name);
-        }
+        checkUsernameUniqueness(name, id);
+
+        UserUpdateDTO dto = new UserUpdateDTO();
+        dto.setName(name);
+        dto.setPassword(null);
+        dto.setRole(role);
+
+        UserMapper.updateEntity(user, dto);
 
         if (password != null && !password.isBlank()) {
             user.setPassword(passwordEncoder.encode(password));
-        }
-
-        if (role != null) {
-            user.setRole(role);
         }
 
         return repository.save(user);
@@ -89,5 +88,15 @@ public class UserService {
             throw new NoSuchElementException("Usuário não encontrado com id: " + id);
         }
         repository.deleteById(id);
+    }
+
+    private void checkUsernameUniqueness(String name, Long currentUserId) {
+        if (name != null && !name.isBlank()) {
+            repository.findByName(name).ifPresent(existingUser -> {
+                if (currentUserId == null || !existingUser.getId().equals(currentUserId)) {
+                    throw new IllegalArgumentException("Nome de usuário já está em uso.");
+                }
+            });
+        }
     }
 }

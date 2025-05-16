@@ -2,6 +2,7 @@ package com.annotation.annotation.model.entity.dto;
 
 import com.annotation.annotation.model.entity.UserRole;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class UserRequestDTO {
@@ -14,7 +15,7 @@ public class UserRequestDTO {
     @Size(min = 6, max = 100)
     private  String password;
 
-    @NotBlank(message = "Role é obrigatório")
+    @NotNull(message = "Role é obrigatório")
     private UserRole role;
 
     public String getName() {
