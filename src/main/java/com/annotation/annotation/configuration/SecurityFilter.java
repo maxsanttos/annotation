@@ -34,19 +34,29 @@ public class SecurityFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
+        System.out.println("SecurityFilter chamado");
+
         String token = recoverToken(request);
 
         if (token != null && !token.isEmpty()) {
-            String login = tokenService.validateToken(token);
+            String userIdStr = tokenService.validateToken(token);
 
-            if (login != null && !login.isEmpty()) {
-                UserDetails user = userRepository.findByName(login).orElse(null);
+            if (userIdStr != null && !userIdStr.isEmpty()) {
+                try {
+                    Long userId = Long.valueOf(userIdStr);
+                    User user = userRepository.findById(userId).orElse(null);
 
-                if (user != null) {
-                    UsernamePasswordAuthenticationToken authentication =
-                            new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                    System.out.println("Usuário recuperado: " + (user != null ? user.getName() : "null"));
 
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                    if (user != null) {
+                        UsernamePasswordAuthenticationToken authentication =
+                                new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                        System.out.println("Usuário autenticado: " + user.getName());
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("ID do usuário inválido no token");
                 }
             }
         }

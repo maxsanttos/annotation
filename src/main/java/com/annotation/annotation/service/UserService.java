@@ -6,7 +6,9 @@ import com.annotation.annotation.model.entity.UserRole;
 import com.annotation.annotation.model.entity.dto.UserUpdateDTO;
 import com.annotation.annotation.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,21 +29,31 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public User getLoggedInUser(){
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    public User getLoggedInUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        String username;
-        if (principal instanceof UserDetails){
-            username = ((UserDetails) principal).getUsername();
-        } else {
-            username = principal.toString();
+        if (authentication == null || !authentication.isAuthenticated()
+                || authentication instanceof AnonymousAuthenticationToken) {
+            throw new AuthenticationCredentialsNotFoundException("Usuário não autenticado");
         }
-         return repository.findByName(username)
-                 .orElseThrow(() ->
-                         new AuthenticationCredentialsNotFoundException("Usuário não autenticado ou credenciais inválidas."));
+
+        Object principal = authentication.getPrincipal();
+
+        if (principal instanceof User) {
+            User user = (User) principal;
+            Long userId = user.getId();
+            return repository.findById(userId)
+                    .orElseThrow(() -> new AuthenticationCredentialsNotFoundException("Usuário não encontrado: " + userId));
+        }
+
+        throw new AuthenticationCredentialsNotFoundException("Usuário não autenticado corretamente");
     }
 
+
+
     public User createUser(String name, String password, UserRole role) {
+        System.out.println("Tentando criar usuário: " + name);
+
         if (repository.findByName(name).isPresent()) {
             throw new IllegalArgumentException("Nome de usuário já está em uso.");
         }
@@ -51,8 +63,11 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(password));
         user.setRole(role);
 
-        return repository.save(user);
+        User saved = repository.save(user);
+        System.out.println("Usuário salvo com ID: " + saved.getId());
+        return saved;
     }
+
 
     public User updateUser(Long id, String name, String password, UserRole role) {
         User user = repository.findById(id)

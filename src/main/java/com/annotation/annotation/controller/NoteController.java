@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/notes")
+@RequestMapping("/notes")
 public class NoteController {
 
     private final NoteService noteService;
@@ -45,5 +45,10 @@ public class NoteController {
     public ResponseEntity<Void> deleteNote(@PathVariable Long id) {
         noteService.deleteNote(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<List<NoteResponseDTO>> getMyNotes() {
+        return ResponseEntity.ok(noteService.getNotesFromLoggedUser());
     }
 }

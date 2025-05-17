@@ -21,14 +21,13 @@ public class TokenService {
     public String generateToken(User user){
         try {
             Algorithm algorithm = Algorithm.HMAC256(secret);
-            String token = JWT.create()
+            return JWT.create()
                     .withIssuer("auth-api")
-                    .withSubject(user.getName())
-                    .withExpiresAt(genExpiratonDate())
+                    .withSubject(String.valueOf(user.getId()))  // aqui usa o id do usuário
+                    .withExpiresAt(genExpirationDate())
                     .sign(algorithm);
-            return token;
         }catch (JWTCreationException exception){
-            throw new RuntimeException("Error while generating token",exception);
+            throw new RuntimeException("Error while generating token", exception);
         }
     }
 
@@ -39,13 +38,13 @@ public class TokenService {
                     .withIssuer("auth-api")
                     .build()
                     .verify(token)
-                    .getSubject();
-        }catch (JWTVerificationException exception){
+                    .getSubject();  // aqui será o id do usuário em string
+        } catch (JWTVerificationException exception){
             return "";
         }
     }
 
-    private Instant genExpiratonDate(){
+    private Instant genExpirationDate(){
         return LocalDateTime.now().plusHours(2).toInstant(ZoneOffset.ofHours(-3));
     }
 }

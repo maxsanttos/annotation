@@ -49,18 +49,43 @@ public class NoteService {
     }
 
     public NoteResponseDTO updateNote(Long id, NoteDTO noteDTO) {
+        User user = userService.getLoggedInUser();
+        if (user == null) {
+            throw new UnauthorizedException("Usuário não autenticado");
+        }
+
         Note note = noteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Nota não encontrada"));
+
+        if (!note.getUser().getId().equals(user.getId())) {
+            throw new UnauthorizedException("Você não tem permissão para editar esta nota");
+        }
 
         NoteMapper.updateEntity(note, noteDTO);
         note = noteRepository.save(note);
         return NoteMapper.toResponseDTO(note);
     }
 
+
     public void deleteNote(Long id) {
-        if (!noteRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Nota não encontrada para deletar");
+        User user = userService.getLoggedInUser();
+        Note note = noteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Nota não encontrada"));
+
+        if (!note.getUser().getId().equals(user.getId())) {
+            throw new UnauthorizedException("Você não tem permissão para deletar esta nota");
         }
-        noteRepository.deleteById(id);
+
+        noteRepository.delete(note);
     }
+
+    public List<NoteResponseDTO> getNotesFromLoggedUser() {
+        User user = userService.getLoggedInUser();
+        List<Note> notes = noteRepository.findByUserId(user.getId());
+        return notes.stream()
+                .map(NoteMapper::toResponseDTO)
+                .toList();
+    }
+
+
 }

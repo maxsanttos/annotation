@@ -1,10 +1,14 @@
 package com.annotation.annotation.controller;
 
+import com.annotation.annotation.configuration.TokenService;
 import com.annotation.annotation.model.entity.User;
 import com.annotation.annotation.model.entity.UserMapper;
+import com.annotation.annotation.model.entity.UserRole;
 import com.annotation.annotation.model.entity.dto.UserRequestDTO;
 import com.annotation.annotation.model.entity.dto.UserResponseDTO;
 import com.annotation.annotation.model.entity.dto.UserUpdateDTO;
+import com.annotation.annotation.model.entity.dto.UserWithTokenDTO;
+import com.annotation.annotation.repository.UserRepository;
 import com.annotation.annotation.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +21,29 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 public class UserController {
 
-    @Autowired
-    private UserService service;
+    private final UserRepository userRepository;
+    private final UserService service;
+    private final TokenService tokenService;
 
-    @PostMapping
-    public ResponseEntity<UserResponseDTO> createUser(@Valid @RequestBody UserRequestDTO dto) {
-        User user = service.createUser(dto.getName(), dto.getPassword(), dto.getRole());
-        return new ResponseEntity<>(UserMapper.toDTO(user), HttpStatus.CREATED);
+    public UserController(UserService service, TokenService tokenService, UserRepository userRepository) {
+        this.service = service;
+        this.tokenService = tokenService;
+        this.userRepository = userRepository;
+    }
+
+    @PostMapping("/register")
+    public ResponseEntity<?> registerWithToken(@Valid @RequestBody UserRequestDTO dto) {
+        try {
+            User user = service.createUser(dto.getName(), dto.getPassword(), dto.getRole());
+            String token = tokenService.generateToken(user);
+            UserResponseDTO userDTO = UserMapper.toDTO(user);
+            return new ResponseEntity<>(new UserWithTokenDTO(userDTO, token), HttpStatus.CREATED);
+        } catch (RuntimeException ex) {
+            return ResponseEntity.badRequest().body(ex.getMessage());
+        }
     }
 
     @PreAuthorize("isAuthenticated()")

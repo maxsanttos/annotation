@@ -1,9 +1,15 @@
 package com.annotation.annotation.model.entity.dto;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+
 import java.time.LocalDateTime;
 
 public class NoteDTO {
 
+    @NotBlank(message = "O título não pode estar em branco")
+    @Size(min = 3, max = 100, message = "O título deve ter entre 3 e 100 caracteres")
     private String title;
+    @NotBlank(message = "O conteúdo não pode estar em branco")
     private String content;
 
 
