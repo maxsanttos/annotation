@@ -48,6 +48,14 @@ public class SecurityConfigurations {
                         .requestMatchers(HttpMethod.POST,"/notes").hasRole("USER")
                         .requestMatchers(HttpMethod.DELETE,"/notes/*").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.GET,"/notes/me").permitAll()
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/v3/api-docs",
+                                "/swagger-resources/**",
+                                "/webjars/**"
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)

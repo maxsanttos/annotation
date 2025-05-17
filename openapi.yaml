@@ -1,0 +1,180 @@
+openapi: 3.0.3
+info:
+  title: API de Anotações
+  description: API RESTful com Spring Boot, autenticação JWT e controle de usuários e notas.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    AuthRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+      required:
+        - name
+        - password
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+
+    UserRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [USER, ADMIN]
+      required: [name, password, role]
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        role:
+          type: string
+
+    NoteRequest:
+      type: object
+      properties:
+        title:
+          type: string
+        content:
+          type: string
+      required: [title, content]
+
+    NoteResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        content:
+          type: string
+
+security:
+  - BearerAuth: []
+
+paths:
+  /auth/login:
+    post:
+      summary: Autenticar usuário e obter JWT
+      tags: [Autenticação]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuthRequest'
+      responses:
+        200:
+          description: Token JWT
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuthResponse'
+
+  /users/register:
+    post:
+      summary: Registrar novo usuário
+      tags: [Usuários]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRequest'
+      responses:
+        201:
+          description: Usuário criado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+
+  /notes:
+    get:
+      summary: Listar todas as anotações públicas
+      tags: [Notas]
+      responses:
+        200:
+          description: Lista de notas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NoteResponse'
+    post:
+      summary: Criar nova anotação
+      tags: [Notas]
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NoteRequest'
+      responses:
+        201:
+          description: Nota criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NoteResponse'
+
+  /notes/me:
+    get:
+      summary: Listar anotações do usuário autenticado
+      tags: [Notas]
+      security:
+        - BearerAuth: []
+      responses:
+        200:
+          description: Lista de notas do usuário
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/NoteResponse'
+
+  /notes/{id}:
+    delete:
+      summary: Excluir anotação (somente ADMIN)
+      tags: [Notas]
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: ID da anotação
+      responses:
+        204:
+          description: Nota deletada com sucesso
+        403:
+          description: Acesso negado
