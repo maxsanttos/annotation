@@ -6,7 +6,7 @@ Este projeto é uma API RESTful desenvolvida com Spring Boot para gerenciar **us
 
 ## 🚀 Tecnologias Utilizadas
 
-- Java 17+
+- Java 21
 - Spring Boot
 - Spring Data JPA
 - Spring Security
